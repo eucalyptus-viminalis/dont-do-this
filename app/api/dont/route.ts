@@ -2,12 +2,10 @@ import { Cast } from "@/farcaster/cast";
 import { FrameSignaturePacket } from "@/farcaster/frame-signature-packet";
 import { frame200Response } from "@/farcaster/response";
 import { USER_DATA_TYPE, UserData } from "@/farcaster/user";
-import { time } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 // Host
 const HOST_URL = process.env["HOST"];
-// const HOST_URL = "https://5d3a-119-18-20-120.ngrok-free.app"
 
 // Frame Contents
 const title = "dont";
@@ -54,7 +52,6 @@ export function GET()
 // Handle POST
 export async function POST(req: NextRequest, res: NextResponse)
 {
-    console.log("POST")
     // Query string
     const searchParams = req.nextUrl.searchParams;
     let indexString = searchParams.get("index");
@@ -66,16 +63,13 @@ export async function POST(req: NextRequest, res: NextResponse)
     if (indexString == "0" && btnIndex == 1 || btnIndex == 1 && indexString == null || reset == "true") {
         return TitleFrame()
     }
-    // let chain = searchParams.get("chain")
 
     // Grab casts
-    const response = await fetch(
+    const castsRes = await fetch(
         `${HUBBLE_URL}/castsByFid?fid=${FID}&pageSize=500&reverse=1`
     );
-    const { messages } = await response.json();
+    const { messages } = await castsRes.json();
     const casts: Cast[] = messages;
-    // DEBUG
-    console.log(`casts.length: ${casts.length}`);
 
     // Filter replies for don't do this
     const filteredCasts = casts.filter(c=>c.data != undefined && c.data.castAddBody != undefined).filter(
@@ -88,52 +82,42 @@ export async function POST(req: NextRequest, res: NextResponse)
             return txt.includes("dont do this") || txt.includes("don't do this")
         }
     );
-    // DEBUG
-    console.log(`filteredCasts.length: ${filteredCasts.length}`);
 
-    // If no casts found
+    // If no casts found, return early
     if (filteredCasts.length == 0)
     {
         return NoCastsFrame()
     }
 
+    // dont do this/s found
     const total = filteredCasts.length;
 
+    // Get username and pfp
+    const usernamePromise = fetch(
+        `${HUBBLE_URL}/userDataByFid?fid=${FID}&user_data_type=${USER_DATA_TYPE.USERNAME}`
+    );
+    const pfpPromise = fetch(
+        `${HUBBLE_URL}/userDataByFid?fid=${FID}&user_data_type=${USER_DATA_TYPE.PFP}`
+    );
+    const [usernameRes, pfpRes] = await Promise.all([usernamePromise, pfpPromise])
+    const usernameData: UserData = await usernameRes.json();
+    const username = usernameData.data.userDataBody.value;
+    const pfpData: UserData = await pfpRes.json();
+    const pfp = pfpData.data.userDataBody.value;
 
-    // Select reply to show
-    // FIX: select using buttonIndex and res.query
-    console.log(`btnIndex: ${btnIndex}`);
-    console.log(`indexString: ${indexString}`);
+    // Select cast
     let index: number = 0
     if (!indexString) {
         index = 0;
     } else if (btnIndex == 2) {
-        console.log("IF2");
         index = +indexString + 1;
     } else if (btnIndex == 1) {
-        console.log("IF2");
         index = +indexString - 1;
     }
     const buttonNames = index != total - 1 ? ["⏮️", "⏭️"] : ["⏮️"]
-
-    // chain = "early";
-    console.log(`index: ${index!}`);
     const cast = filteredCasts[index];
-    console.log(`cast: ${cast}`)
     const timestamp = cast.data.timestamp
-    console.log(`timestamp: ${timestamp}`)
     const img = cast.data.castAddBody.embeds[0].url;
-    const usernameRes = await fetch(
-        `${HUBBLE_URL}/userDataByFid?fid=${FID}&user_data_type=${USER_DATA_TYPE.USERNAME}`
-    );
-    const usernameData: UserData = await usernameRes.json();
-    const username = usernameData.data.userDataBody.value;
-    const pfpRes = await fetch(
-        `${HUBBLE_URL}/userDataByFid?fid=${FID}&user_data_type=${USER_DATA_TYPE.PFP}`
-    );
-    const pfpData: UserData = await pfpRes.json();
-    const pfp = pfpData.data.userDataBody.value;
-
     const frameImageUrl =
         HOST_URL +
         `/api/image/dont?timestamp=${timestamp}&img=${img}&username=${username}&pfp=${pfp}&index=${index}&total=${total}&date=${Date.now()}`;
