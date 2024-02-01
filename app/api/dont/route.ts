@@ -31,7 +31,7 @@ function TitleFrame()
 
 function NoCastsFrame()
 {
-    const buttonNames = ["dont refresh"];
+    const buttonNames = ["dont back"];
     const postUrl = HOST_URL + `/api/dont?reset=true`;
     const frameImageUrl = HOST_URL + `/no-donts.png`;
     return frame200Response(
