@@ -114,7 +114,7 @@ export async function POST(req: NextRequest, res: NextResponse)
     } else if (btnIndex == 1) {
         index = +indexString - 1;
     }
-    const buttonNames = index != total - 1 ? ["dontdo back", "dontdo next"] : ["dontdo back"]
+    const buttonNames = index != total - 1 ? ["dont back", "dont next"] : ["dont back"]
     const cast = filteredCasts[index];
     const timestamp = cast.data.timestamp
     const img = cast.data.castAddBody.embeds[0].url;
