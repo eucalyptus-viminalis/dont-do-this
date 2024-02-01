@@ -17,7 +17,7 @@ const FID = 3
 
 function TitleFrame()
 {
-    const buttonNames = ["↩️", "▶️"];
+    const buttonNames = ["dont refresh", "dont press"];
     const postUrl = HOST_URL + `/api/dont`;
     const frameImageUrl = HOST_URL + `/title.png`;
     return frame200Response(
@@ -31,7 +31,7 @@ function TitleFrame()
 
 function NoCastsFrame()
 {
-    const buttonNames = ["↩️"];
+    const buttonNames = ["dont refresh"];
     const postUrl = HOST_URL + `/api/dont?reset=true`;
     const frameImageUrl = HOST_URL + `/no-donts.png`;
     return frame200Response(
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest, res: NextResponse)
     } else if (btnIndex == 1) {
         index = +indexString - 1;
     }
-    const buttonNames = index != total - 1 ? ["⏮️", "⏭️"] : ["⏮️"]
+    const buttonNames = index != total - 1 ? ["dontdo back", "dontdo next"] : ["dontdo back"]
     const cast = filteredCasts[index];
     const timestamp = cast.data.timestamp
     const img = cast.data.castAddBody.embeds[0].url;
