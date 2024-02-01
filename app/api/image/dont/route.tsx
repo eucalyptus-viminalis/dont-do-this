@@ -61,7 +61,8 @@ export function GET(req: NextRequest) {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        padding: "50px",
+                        padding: "16px",
+                        fontSize: 32,
                         display: "flex",
                         height: "100%",
                         flexDirection: "column",
@@ -70,15 +71,15 @@ export function GET(req: NextRequest) {
                 >
                     <img alt="avatar" width="128" src={`${pfp}`} style={{}} />
                     <p tw="border-2 border-black p-2">@{username}</p>
-                    <span>{hoursAgo.toFixed(0)}h ago</span>
+                    <span style={{color: "gray"}}>{hoursAgo.toFixed(0)}h ago</span>
                 </div>
                 <img
                     alt="img"
                     height="600"
                     src={`${img}`}
                     style={{
-                        maxHeight: '400px',  // Set your desired maximum height
-                        maxWidth: '600px',   // Set your desired maximum width
+                        maxHeight: '600px',  // Set your desired maximum height
+                        maxWidth: '800px',   // Set your desired maximum width
                         // borderRadius: 128,
                     }}
                 />
