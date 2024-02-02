@@ -1,6 +1,10 @@
 # dont do this
 
-It's a farcaster frame. every time dan casts dont do this, it'll get added to the frame !
+It's a farcaster frame. every time dan casts dont do this, it'll get added to the frame ! (filters dan's last 500 casts currently)
+
+## In action!
+
+https://warpcast.com/3070/0xbbd3cde2
 
 ## Tech
 
